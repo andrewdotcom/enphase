@@ -1,7 +1,10 @@
 import requests
 import os
+import csv
+import datetime
+import pytz
 
-class enphase: 
+class enphaseAPIReading: 
     '''
     Class to wrap the enphase api
     '''
@@ -32,7 +35,30 @@ class enphase:
             summary_json = {}
         return summary_json
 
+    def get_filename(self):
+        now   = datetime.datetime.now()
+        zone  = pytz.timezone("Europe/London")
+        now   = zone.localize(now)
+        today = now.strftime("%Y-%m-%d")
+        return today+".csv"    
+
+    def to_csv(self, path='./'):
+        summaryJSON = self.summary()
+        headers = []
+        readings = []
+        for key in summaryJSON:
+            headers.append(key)
+
+        filename = path+self.get_filename()
+        file_exists = os.path.isfile(filename)
+
+        with open (filename, 'a') as f:
+            writer = csv.DictWriter(f, delimiter=',', lineterminator='\n',fieldnames=headers)
+            if not file_exists:
+                writer.writeheader()
+            writer.writerow(summaryJSON)
+            
 #Example usage
-solar = enphase(os.getenv('USER_ID'),os.getenv('KEY'))
-summary = solar.summary()
-print(summary)
+if __name__ == "__main__":
+    solar = enphaseAPIReading(os.getenv('USER_ID'),os.getenv('KEY'))
+    solar.to_csv("./data/")
