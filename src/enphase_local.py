@@ -1,8 +1,6 @@
 import requests
 import os
 import csv
-import datetime
-import pytz
 import datetime as datetime
 import matplotlib as mpl
 mpl.use('Agg')
