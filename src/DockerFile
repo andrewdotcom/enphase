@@ -2,7 +2,7 @@ FROM python:3.8-slim-buster
 COPY requirements.txt /tmp
 WORKDIR /enphase
 COPY ./enphase_local.py .
-RUN apk update
-RUN apk add make automake gcc g++ subversion python3-dev
+RUN apt-get update
+RUN apt-get install build-essential manpages-dev 
 RUN python3 -m pip install --no-cache-dir -r /tmp/requirements.txt
 CMD ["python3", "enphase_local.py"]
