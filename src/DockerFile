@@ -2,5 +2,5 @@ FROM python:3.8-slim-buster
 COPY requirements.txt /tmp
 WORKDIR /enphase
 COPY ./enphase_local.py .
-RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+RUN python3 -m pip install --no-cache-dir -r /tmp/requirements.txt
 CMD ["python3", "enphase_local.py"]
