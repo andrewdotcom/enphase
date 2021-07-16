@@ -4,5 +4,6 @@ WORKDIR /enphase
 COPY ./enphase_local.py .
 RUN apt-get update
 RUN apt-get install -y python3-pandas python3-matplotlib python3-numpy python3-requests
+RUN python3 -m pip install requests
 # RUN python3 -m pip install --no-cache-dir -r /tmp/requirements.txt
 CMD ["python3", "enphase_local.py"]
