@@ -63,7 +63,7 @@ class enphaseAPIReading:
     def to_graph(self, csv_file=''):
         
         if csv_file == '':
-            csv_file = f'../enphase/data/production/{self.get_filename()}'
+            csv_file = f'/enphase/data/production/{self.get_filename()}'
 
         df = pd.read_csv(csv_file)
         df = df.drop(['type', 'activeCount', 'whLifetime'], axis=1)
