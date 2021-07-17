@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.dates import DateFormatter
 import pandas as pd
+import pytz
 
 class enphaseAPIReading: 
     '''
@@ -62,7 +63,7 @@ class enphaseAPIReading:
     def to_graph(self, csv_file=''):
         
         if csv_file == '':
-            csv_file = f'/enphase/data/production/{self.get_filename()}'
+            csv_file = f'../enphase/data/production/{self.get_filename()}'
 
         df = pd.read_csv(csv_file)
         df = df.drop(['type', 'activeCount', 'whLifetime'], axis=1)
@@ -72,8 +73,7 @@ class enphaseAPIReading:
         total_kwh = round((df['wNow'].sum(axis=0)/60/1000), 2)
         money = '${:.2f}'.format((round((total_kwh * self.payment_rate),2)))
 
-        print(df.to_string())
-
+        #print(df.to_string())
         #df.plot(x='time', y='wNow', kind='line')
         
         fig, ax = plt.subplots(figsize=(12, 12))

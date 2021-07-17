@@ -7,4 +7,6 @@ gen_requirements:
 run:
 	docker run --rm -e PYTHONUNBUFFERED=1 -v ${HOME}/Src/experiments/enphase/data:/enphase/data enphase
 
+refresh: docker run
+
 all: gen_requirements docker run
