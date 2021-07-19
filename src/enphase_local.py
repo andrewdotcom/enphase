@@ -96,7 +96,7 @@ class enphaseAPIReading:
 
         #fig.autofmt_xdate()
 
-        plt.savefig(f"/media/pi/61c9c4ba-40da-4e5f-a286-d6e75ed3dcc3/enphase/data/{self.today}_graph.png")
+        plt.savefig(f"/media/pi/61c9c4ba-40da-4e5f-a286-d6e75ed3dcc3/enphase/data/graphs/{self.today}_graph.png")
         
     def post_tweet():
         pass
