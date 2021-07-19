@@ -9,6 +9,8 @@ import matplotlib.dates as mdates
 from matplotlib.dates import DateFormatter
 import pandas as pd
 import pytz
+from astral import LocationInfo
+from astral.sun import sun
 
 class enphaseAPIReading: 
     '''
@@ -18,7 +20,7 @@ class enphaseAPIReading:
     payment_rate = 0.05
     city_name = 'Empire Bay'
     now   = datetime.datetime.now()
-    zone  = pytz.timezone("Europe/London")
+    zone  = pytz.timezone("Australia/Sydney")
     now   = zone.localize(now)
     today = now.strftime("%Y-%m-%d")
 
@@ -38,16 +40,17 @@ class enphaseAPIReading:
     def get_png_filename(self):
         return f'{self.today}.png'   
 
-    def to_csv(self):
-        
+    def to_csv(self): 
+
         reading_types = ['production', 'consumption']
         
         for reading_type in reading_types:
             headers = []
+
             for key in self.readings_dict[reading_type][0]:
                 headers.append(key)
 
-            filename = f'/enphase/data/{reading_type}/{self.get_filename()}'
+            filename = f'/media/pi/61c9c4ba-40da-4e5f-a286-d6e75ed3dcc3/enphase/data/{reading_type}/{self.get_filename()}'
             file_exists = os.path.isfile(filename)
             dir_exists = os.path.isdir(os.path.dirname(filename))
 
@@ -60,10 +63,12 @@ class enphaseAPIReading:
                     writer.writeheader()
                 writer.writerow(self.readings_dict[reading_type][0])
 
-    def to_graph(self, csv_file=''):
+    def to_graph(self, csv_file='', force=False):
         
         if csv_file == '':
-            csv_file = f'/enphase/data/production/{self.get_filename()}'
+            csv_file = f'/media/pi/61c9c4ba-40da-4e5f-a286-d6e75ed3dcc3/enphase/data/production/{self.get_filename()}'
+        if os.path.exists(csv_file) and force != True:
+            return
 
         df = pd.read_csv(csv_file)
         df = df.drop(['type', 'activeCount', 'whLifetime'], axis=1)
@@ -89,15 +94,25 @@ class enphaseAPIReading:
         date_form = DateFormatter("%H:%I")
         ax.xaxis.set_major_formatter(date_form)
 
-        fig.autofmt_xdate()
+        #fig.autofmt_xdate()
 
-        plt.savefig(f"/enphase/data/{self.today}_graph.png")
+        plt.savefig(f"/media/pi/61c9c4ba-40da-4e5f-a286-d6e75ed3dcc3/enphase/data/{self.today}_graph.png")
         
     def post_tweet():
         pass
             
 #Example usage
 if __name__ == "__main__":
+
+    city_name = 'Sydney'
+    city = LocationInfo('city_name')
+    sun = sun(city.observer)
+    tzi = (sun['sunrise']).tzinfo
+
     solar = enphaseAPIReading()
-    solar.to_csv()
-    solar.to_graph()
+
+    if datetime.datetime.now(tzi) > (sun['sunrise']) and datetime.datetime.now(tzi) < (sun['sunset']):
+        solar.to_csv()
+    
+    if datetime.datetime.now(tzi) < (sun['sunset']):
+        solar.to_graph()
